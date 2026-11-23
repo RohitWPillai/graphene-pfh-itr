@@ -1,0 +1,35 @@
+cff-version: 1.2.0
+message: "If you use these inputs, code or data, please cite them as below."
+title: "Heat flow across graphene / n-perfluorohexane interfaces: NEMD inputs, analysis and data, 50 to 400 bar"
+version: 0.1.0
+doi: 10.5281/zenodo.24458688
+date-released: 2026-11-23
+identifiers:
+  - type: doi
+    value: 10.5281/zenodo.24458687
+    description: "All versions (concept DOI)"
+  - type: doi
+    value: 10.5281/zenodo.24458688
+    description: "Version 0.1.0"
+authors:
+  - family-names: Hulikal Chakrapani
+    given-names: Thejas
+    affiliation: "School of Engineering, University of Edinburgh"
+    orcid: "https://orcid.org/0000-0002-8182-345X"
+  - family-names: Pillai
+    given-names: Rohit
+    affiliation: "School of Engineering, University of Edinburgh"
+    orcid: "https://orcid.org/0000-0002-1332-4819"
+repository-code: "https://github.com/RohitWPillai/graphene-pfh-itr"
+license:
+  - MIT
+  - CC-BY-4.0
+  - GPL-2.0-only
+keywords:
+  - non-equilibrium molecular dynamics
+  - interfacial thermal resistance
+  - Kapitza resistance
+  - graphene
+  - perfluorohexane
+  - solid-liquid interface
+  - LAMMPS

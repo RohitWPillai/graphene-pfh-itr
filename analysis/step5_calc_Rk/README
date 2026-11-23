@@ -1,0 +1,8 @@
+[1] Step 1: Calculate block averages of the sheet temperatures of the graphene, for each pressure. 
+            For example: 50bar_cold_sheets.dat contains the temperature of the cold sheets on the left and right domain. 
+            For example: 50bar_hot_sheets.dat contains the temperature of the hot sheets on the left and right domain. 
+
+[2] Step 2: Calculate block averages of the temperatures of pfh on the left and right hand domain.
+            For example: 50bar_pfh_temp.dat contains temperature of pfh in 250 bins (for instance) between left and right walls.
+
+[3] Step 3: Combine output from Step 1 and Step 2 to calculate Rk, for each pressure and produce a plot. 

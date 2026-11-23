@@ -1,0 +1,12 @@
+#!/bin/bash
+
+mpi="/path/to/lammps-stable_29Aug2024/src/lmp_mpi"
+
+ncores=14
+in="in.run"
+seedrndm="1234521"
+press=1000
+
+cp ../step1_npt/config.end_of_npt ./
+
+mpirun -np ${ncores} ${mpi} -in ${in} -v "targetPress" ${press}

@@ -1,0 +1,22 @@
+# Dynamically generated group definitions for NPT simulation
+group   L_W_1       type 4
+group   L_W_2       type 5
+group   L_W_3       type 6
+group   L_W_4       type 7
+group   L_W_5       type 8
+group   L_W_6       type 9
+group   L_W_7       type 10
+group   L_W_8       type 11
+group   L_W_9       type 12
+group   PFH         type 1 2 3 
+group   R_W_1       type 21
+group   R_W_2       type 20
+group   R_W_3       type 19
+group   R_W_4       type 18
+group   R_W_5       type 17
+group   R_W_6       type 16
+group   R_W_7       type 15
+group   R_W_8       type 14
+group   R_W_9       type 13
+group   lw_all union L_W_1 L_W_2 L_W_3 L_W_4 L_W_5 L_W_6 L_W_7 L_W_8 L_W_9
+group   rw_all union R_W_1 R_W_2 R_W_3 R_W_4 R_W_5 R_W_6 R_W_7 R_W_8 R_W_9

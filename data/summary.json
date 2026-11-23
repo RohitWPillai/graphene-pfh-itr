@@ -1,0 +1,120 @@
+{
+  "description": "Graphene / n-perfluorohexane NEMD: results per pressure, recomputed by tools/verify_results.py from data/.",
+  "units": {
+    "R_K": "m^2 K / W",
+    "heat_flux": "W / m^2",
+    "density": "kg / m^3",
+    "distance": "Angstrom",
+    "thermal_conductivity": "W / (m K)"
+  },
+  "error_definitions": {
+    "R_K_sd_blocks": "population standard deviation (ddof=0) of 5 time-block values; the error bar used in the README and figures",
+    "R_K_sem": "standard error of the mean of the 5 block values (ddof=1)"
+  },
+  "cross_section_implied_by_J_A2": [
+    2150.11,
+    2152.07,
+    2150.11,
+    2150.11,
+    2150.11,
+    2150.11,
+    2150.11
+  ],
+  "spectral_checks": {
+    "largest_change_from_smoothing_fraction": 0.00676,
+    "largest_difference_integrated_spectrum_vs_thermostat_flow_fraction": 0.01556
+  },
+  "results": [
+    {
+      "pressure_bar": 50,
+      "heat_flux_W_m2": 418021000.0,
+      "R_K_m2K_W": 4.290553000657933e-08,
+      "R_K_sd_blocks_m2K_W": 2.091671745600591e-09,
+      "R_K_sem_m2K_W": 1.0458358728002955e-09,
+      "R_K_hot_interface_m2K_W": 3.89586204184792e-08,
+      "R_K_cold_interface_m2K_W": 4.6852439594679484e-08,
+      "PFH_thermal_conductivity_W_mK": 0.05733631129467821,
+      "bulk_density_kg_m3": 1647.28,
+      "first_peak_density_hot_interface_kg_m3": 2583.58,
+      "first_peak_distance_from_sheet_A": 3.18
+    },
+    {
+      "pressure_bar": 100,
+      "heat_flux_W_m2": 426546000.0,
+      "R_K_m2K_W": 4.33936628230341e-08,
+      "R_K_sd_blocks_m2K_W": 2.836016609647408e-09,
+      "R_K_sem_m2K_W": 1.418008304823704e-09,
+      "R_K_hot_interface_m2K_W": 4.049985432333156e-08,
+      "R_K_cold_interface_m2K_W": 4.6287471322736623e-08,
+      "PFH_thermal_conductivity_W_mK": 0.060286879812578575,
+      "bulk_density_kg_m3": 1676.19,
+      "first_peak_density_hot_interface_kg_m3": 2647.41,
+      "first_peak_distance_from_sheet_A": 3.19
+    },
+    {
+      "pressure_bar": 200,
+      "heat_flux_W_m2": 455824000.0,
+      "R_K_m2K_W": 4.0211943621112685e-08,
+      "R_K_sd_blocks_m2K_W": 2.059777414252564e-09,
+      "R_K_sem_m2K_W": 1.029888707126282e-09,
+      "R_K_hot_interface_m2K_W": 3.5390079523163186e-08,
+      "R_K_cold_interface_m2K_W": 4.5033807719062183e-08,
+      "PFH_thermal_conductivity_W_mK": 0.06333356118816935,
+      "bulk_density_kg_m3": 1711.06,
+      "first_peak_density_hot_interface_kg_m3": 2703.63,
+      "first_peak_distance_from_sheet_A": 3.16
+    },
+    {
+      "pressure_bar": 250,
+      "heat_flux_W_m2": 452930000.0,
+      "R_K_m2K_W": 4.1368969076002345e-08,
+      "R_K_sd_blocks_m2K_W": 8.947952761895353e-10,
+      "R_K_sem_m2K_W": 4.4739763809476767e-10,
+      "R_K_hot_interface_m2K_W": 3.81287055762149e-08,
+      "R_K_cold_interface_m2K_W": 4.4609232575789784e-08,
+      "PFH_thermal_conductivity_W_mK": 0.06333904642413517,
+      "bulk_density_kg_m3": 1731.87,
+      "first_peak_density_hot_interface_kg_m3": 2768.23,
+      "first_peak_distance_from_sheet_A": 3.15
+    },
+    {
+      "pressure_bar": 300,
+      "heat_flux_W_m2": 468118000.0,
+      "R_K_m2K_W": 4.1304197163433906e-08,
+      "R_K_sd_blocks_m2K_W": 2.134806184544875e-09,
+      "R_K_sem_m2K_W": 1.0674030922724376e-09,
+      "R_K_hot_interface_m2K_W": 3.5694281333286384e-08,
+      "R_K_cold_interface_m2K_W": 4.691411299358142e-08,
+      "PFH_thermal_conductivity_W_mK": 0.06734043578678837,
+      "bulk_density_kg_m3": 1756.49,
+      "first_peak_density_hot_interface_kg_m3": 2798.04,
+      "first_peak_distance_from_sheet_A": 3.14
+    },
+    {
+      "pressure_bar": 350,
+      "heat_flux_W_m2": 470787000.0,
+      "R_K_m2K_W": 3.855248430275227e-08,
+      "R_K_sd_blocks_m2K_W": 2.593083249022327e-09,
+      "R_K_sem_m2K_W": 1.2965416245111634e-09,
+      "R_K_hot_interface_m2K_W": 3.325194165293197e-08,
+      "R_K_cold_interface_m2K_W": 4.385302695257257e-08,
+      "PFH_thermal_conductivity_W_mK": 0.06430201274873748,
+      "bulk_density_kg_m3": 1775.88,
+      "first_peak_density_hot_interface_kg_m3": 2835.9,
+      "first_peak_distance_from_sheet_A": 3.11
+    },
+    {
+      "pressure_bar": 400,
+      "heat_flux_W_m2": 474657000.0,
+      "R_K_m2K_W": 4.012057193204087e-08,
+      "R_K_sd_blocks_m2K_W": 3.814323577771919e-09,
+      "R_K_sem_m2K_W": 1.9071617888859595e-09,
+      "R_K_hot_interface_m2K_W": 3.4582878024180104e-08,
+      "R_K_cold_interface_m2K_W": 4.565826583990162e-08,
+      "PFH_thermal_conductivity_W_mK": 0.06777744708893851,
+      "bulk_density_kg_m3": 1790.62,
+      "first_peak_density_hot_interface_kg_m3": 2860.55,
+      "first_peak_distance_from_sheet_A": 3.12
+    }
+  ]
+}

@@ -1,0 +1,8 @@
+#!/bin/bash
+
+mpi="/path/to/lammps-stable_29Aug2024/src/lmp_mpi"
+
+ncores=14
+in="in.run"
+
+mpirun -np ${ncores} ${mpi} -in ${in}

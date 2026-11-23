@@ -1,0 +1,6 @@
+
+rm -rf dump*
+rm -rf log*
+rm -rf out*
+rm -rf restart*
+rm -rf config*

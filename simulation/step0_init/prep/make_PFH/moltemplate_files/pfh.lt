@@ -1,0 +1,64 @@
+import "oplsaa2024.lt"
+
+PFH inherits OPLSAA {
+
+  # atom-id mol-id atom-type charge  X      Y      Z
+
+  write('Data Atoms') {
+    $atom:c1  $mol @atom:961 0.0 -3.58560  1.40619 -0.60571
+    $atom:c2  $mol @atom:962 0.0 -2.54654  0.85778  0.38813
+    $atom:c3  $mol @atom:962 0.0 -1.08479  1.04784 -0.10413
+    $atom:c4  $mol @atom:962 0.0 -0.04441  0.47504  0.90033
+    $atom:c5  $mol @atom:962 0.0  1.44840  0.75376  0.56273
+    $atom:c6  $mol @atom:961 0.0  1.96890  0.17618 -0.76596
+    $atom:f11 $mol @atom:965 0.0 -3.40350  2.76338 -0.80410
+    $atom:f12 $mol @atom:965 0.0 -4.85635  1.20455 -0.09713
+    $atom:f13 $mol @atom:965 0.0 -3.49360  0.75432 -1.82271
+    $atom:f21 $mol @atom:965 0.0 -2.72525  1.51406  1.59514
+    $atom:f22 $mol @atom:965 0.0 -2.80162 -0.49060  0.57880
+    $atom:f31 $mol @atom:965 0.0 -0.84246  2.39983 -0.28516
+    $atom:f32 $mol @atom:965 0.0 -0.95709  0.39914 -1.31903
+    $atom:f41 $mol @atom:965 0.0 -0.27325  1.03736  2.14628
+    $atom:f42 $mol @atom:965 0.0 -0.22862 -0.89374  1.01360
+    $atom:f51 $mol @atom:965 0.0  1.67685  2.12010  0.56658
+    $atom:f52 $mol @atom:965 0.0  2.20670  0.19803  1.58120
+    $atom:f61 $mol @atom:965 0.0  1.39829  0.81049 -1.85241
+    $atom:f62 $mol @atom:965 0.0  3.33597  0.37717 -0.83860
+    $atom:f63 $mol @atom:965 0.0  1.72113 -1.18286 -0.83784
+  }
+
+  # Note: You don't have to specify the charge in this example because we are
+  #       using the OPLSAA force-field which assigns charge according to
+  #       atom-type.  Just leave these numbers as 0.00 for now.
+  # Note: LAMMPS expects an integer in the 2nd column (the Molecule-ID number).
+  #       If we put "$mol" there, moltemplate will generate this integer for you
+
+  # A list of the bonds in the molecule:
+  # BondID     AtomID1  AtomID2
+
+  write('Data Bond List') {
+    $bond:c12  $atom:c1 $atom:c2
+    $bond:c1f1 $atom:c1 $atom:f11
+    $bond:c1f2 $atom:c1 $atom:f12
+    $bond:c1f3 $atom:c1 $atom:f13
+    $bond:c23  $atom:c2 $atom:c3
+    $bond:c2f1 $atom:c2 $atom:f21
+    $bond:c2f2 $atom:c2 $atom:f22
+    $bond:c34  $atom:c3 $atom:c4
+    $bond:c3f1 $atom:c3 $atom:f31
+    $bond:c3f2 $atom:c3 $atom:f32
+    $bond:c45  $atom:c4 $atom:c5
+    $bond:c4f1 $atom:c4 $atom:f41
+    $bond:c4f2 $atom:c4 $atom:f42
+    $bond:c56  $atom:c5 $atom:c6
+    $bond:c5f1 $atom:c5 $atom:f51
+    $bond:c5f2 $atom:c5 $atom:f52
+    $bond:c6f1 $atom:c6 $atom:f61
+    $bond:c6f2 $atom:c6 $atom:f62
+    $bond:c6f3 $atom:c6 $atom:f63
+  }
+
+  # In the "Data Bond List" section we don't have to specify the bond type.
+  # The bond-type will be determined by the atom type (according to "oplsaa2024.lt")
+
+} # perfluorohexane

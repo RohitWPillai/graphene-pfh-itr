@@ -1,0 +1,41 @@
+# Define box length in z for periodic corrections
+compute  com_l1  L_W_1  com
+compute  com_l2  L_W_2  com
+compute  com_l3  L_W_3  com
+compute  com_l4  L_W_4  com
+compute  com_l5  L_W_5  com
+compute  com_l6  L_W_6  com
+compute  com_l7  L_W_7  com
+compute  com_l8  L_W_8  com
+compute  com_l9  L_W_9  com
+compute  com_r1  R_W_1  com
+compute  com_r2  R_W_2  com
+compute  com_r3  R_W_3  com
+compute  com_r4  R_W_4  com
+compute  com_r5  R_W_5  com
+compute  com_r6  R_W_6  com
+compute  com_r7  R_W_7  com
+compute  com_r8  R_W_8  com
+compute  com_r9  R_W_9  com
+ 
+variable d_l1 equal c_com_l2[3]-c_com_l1[3]
+variable d_l2 equal c_com_l3[3]-c_com_l2[3]
+variable d_l3 equal c_com_l4[3]-c_com_l3[3]
+variable d_l4 equal c_com_l5[3]-c_com_l4[3]
+variable d_l5 equal c_com_l6[3]-c_com_l5[3]
+variable d_l6 equal c_com_l7[3]-c_com_l6[3]
+variable d_l7 equal c_com_l8[3]-c_com_l7[3]
+variable d_l8 equal c_com_l9[3]-c_com_l8[3]
+variable d_r1 equal c_com_r2[3]-c_com_r1[3]
+variable d_r2 equal c_com_r3[3]-c_com_r2[3]
+variable d_r3 equal c_com_r4[3]-c_com_r3[3]
+variable d_r4 equal c_com_r5[3]-c_com_r4[3]
+variable d_r5 equal c_com_r6[3]-c_com_r5[3]
+variable d_r6 equal c_com_r7[3]-c_com_r6[3]
+variable d_r7 equal c_com_r8[3]-c_com_r7[3]
+variable d_r8 equal c_com_r9[3]-c_com_r8[3]
+
+variable raw_d_wrap equal c_com_l1[3]-c_com_r9[3]
+variable d_wrap equal v_raw_d_wrap-v_lz*round(v_raw_d_wrap/v_lz)
+
+fix  sheetSeps  all ave/time ${Nevery2} ${Nrep2} ${Nfreq2} v_d_l1 v_d_l2 v_d_l3 v_d_l4 v_d_l5 v_d_l6 v_d_l7 v_d_l8 v_d_r1 v_d_r2 v_d_r3 v_d_r4 v_d_r5 v_d_r6 v_d_r7 v_d_r8 v_d_wrap v_lz file out.sheetSeps

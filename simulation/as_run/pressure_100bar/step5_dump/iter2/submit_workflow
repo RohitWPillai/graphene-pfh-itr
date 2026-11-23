@@ -1,0 +1,30 @@
+#!/bin/bash
+
+# Pressure
+press=100
+
+# Define LAMMPS executable
+LMP_MPI="/work/<project>/<project>/<user>/lammps-stable_29Aug2024/src/lmp_mpi"
+
+# Generate random seeds for velocities
+seed1=9677132
+seed2=6773221
+seed3=8700004
+seed4=1632452
+
+#------------ Steps 1-4: Upto Thermalization ------------#
+# Submit initial steps (0-4)
+job_id=$(sbatch --job-name=${press}bar_part1 --export=press=$press,seed1=$seed1,seed2=$seed2,seed3=$seed3,seed4=$seed4,LMP_MPI=${LMP_MPI} init | awk '{print $4}')
+echo "Submitted initial steps with job ID: $job_id"
+
+#------------ Production ------------#
+# Prepare directory for writing the dump files
+mkdir -p /scratch-nvme/<project>/<project>/<user>/PFH/${press}bar/
+
+# Submit three production segments with dependencies
+for iter in $(seq 1 4); do
+    job_id=$(sbatch --dependency=afterok:$job_id --job-name=${press}bar_iter${iter} --export=ITER=$iter,press=$press,LMP_MPI=${LMP_MPI} prod | awk '{print $4}')
+    echo "Submitted production segment $iter with job ID: $job_id"
+done
+
+echo "Workflow submission complete."

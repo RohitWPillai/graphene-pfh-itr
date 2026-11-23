@@ -1,0 +1,11 @@
+compute rfrc wallright force/tally pfhright        # force exerted by right PFH molecules on rightmost wall (in +z dirn.)
+compute lfrc wallleft  force/tally pfhleft         # force exerted by left PFH molecules on leftmost wall  (in -z dirn.)
+
+compute red_rfrc wallright reduce sum c_rfrc[3]     # sum over the forces on the right wall particles (in +z dirn.)
+compute red_lfrc wallleft  reduce sum c_lfrc[3]     # sum over the forces on the left wall particles  (in -z dirn.)
+
+variable press_rwall equal (c_red_rfrc/${wallAr})*${to_bar}          # (total force/area)_rwall = p_rwall (bars)
+variable press_lwall equal (c_red_lfrc/${wallAr})*${to_bar}          # (total force/area)_lwall = p_lwall (bars)
+variable avPress     equal 0.5*(v_press_rwall-v_press_lwall)
+
+fix  avPress  all ave/time ${Nevery2} ${Nrep2} ${Nfreq2} v_press_rwall v_press_lwall v_avPress file "out.avPress"

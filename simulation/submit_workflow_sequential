@@ -1,0 +1,210 @@
+#!/bin/bash
+
+# SLURM directives
+#SBATCH --job-name=multi_pressure_sim
+#SBATCH --partition=standard
+#SBATCH --qos=long
+#SBATCH --account=<project>
+#SBATCH --nodes=18  # 6 pressures * 3 nodes each
+#SBATCH --ntasks-per-node=128
+#SBATCH --cpus-per-task=1
+#SBATCH --time=4-00:00:00
+#SBATCH --output=log_multi_%j.out
+#SBATCH --error=log_multi_%j.err
+
+# Define LAMMPS executable
+LMP_MPI="/work/<project>/<project>/<user>/lammps-stable_29Aug2024/src/lmp_mpi"
+
+# Set common environment variables
+export OMP_NUM_THREADS=1
+export OMP_PLACES=cores
+export SRUN_CPUS_PER_TASK=$SLURM_CPUS_PER_TASK
+export SLURM_CPU_FREQ_REQ=2250000
+
+# Define pressures
+pressures=("50" "200" "250" "300" "350" "400")
+
+# Maximum dumps per iteration
+maxDump=20
+
+# Generate random seeds for velocities (same for all pressures)
+seed1=9677132
+seed2=6773221
+seed3=8700004
+seed4=1632452
+
+# Number of nodes per pressure
+numNodesPerJob=3
+
+home=$(pwd)  # Main directory
+template_dir="${home}/template"
+
+#----------------- Step 0: Initialization -------------------#
+# Run once, shared by all pressures
+if [ ! -f "${home}/step0_init/prep/combine/combined_system.dat" ]; then
+    cp -r ${template_dir}/step0_init "./"
+    cd step0_init
+    echo "Starting step0_init. Final configuration used by all pressures."
+    echo "No initial configuration found. Generating the configuration."
+    ./graf_pfh.prep_workflow.sh > log.prep 2>&1
+    echo "init finished. Usable by all pressures."
+
+    if [ $? -ne 0 ] || [ ! -f "prep/combine/combined_system.dat" ]; then
+        echo "ERROR: Initialization failed. Check step0_init/log.prep"
+        exit 1
+    fi
+    cd ${home}
+fi
+
+config_file="${home}/step0_init/prep/combine/combined_system.dat"
+
+#----------------- Step 1: NPT Equilibration -------------------#
+for press in "${pressures[@]}"; do
+    (
+        run_dir="${home}/pressure_${press}"
+        mkdir -p "${run_dir}/step1_npt"
+        cp -r ${template_dir}/step1_npt/* "${run_dir}/step1_npt/"
+        cp ${config_file} "${run_dir}/step1_npt/in.config"
+
+        cd "${run_dir}/step1_npt"
+        echo "Starting srun for step1_npt for pressure ${press}"
+        srun --nodes=${numNodesPerJob} --ntasks=$((numNodesPerJob * 128)) --distribution=block:block --hint=nomultithread \
+            ${LMP_MPI} -in in.run -v "targetPress" ${press} > log.sim 2>&1
+        echo "npt finished for pressure ${press}"
+
+        if [ $? -ne 0 ] || [ ! -f "config.end_of_npt" ]; then
+            echo "ERROR: NPT step failed for pressure ${press}. Check step1_npt/log.sim"
+            exit 1
+        fi
+    ) &
+done
+wait
+echo "Step 1: NPT completed for all pressures"
+
+#----------------- Step 2: NVT Equilibration -------------------#
+for press in "${pressures[@]}"; do
+    (
+        run_dir="${home}/pressure_${press}"
+        mkdir -p "${run_dir}/step2_nvt"
+        cp -r ${template_dir}/step2_nvt/* "${run_dir}/step2_nvt/"
+
+        cd "${run_dir}/step2_nvt"
+        echo "Starting srun for step2_nvt for pressure ${press}"
+        srun --nodes=${numNodesPerJob} --ntasks=$((numNodesPerJob * 128)) --distribution=block:block --hint=nomultithread \
+            ${LMP_MPI} -in in.run > log.sim 2>&1
+        echo "nvt finished for pressure ${press}"
+
+        if [ $? -ne 0 ] || [ ! -f "config.end_of_nvt" ]; then
+            echo "ERROR: NVT step failed for pressure ${press}. Check step2_nvt/log.sim"
+            exit 1
+        fi
+    ) &
+done
+wait
+echo "Step 2: NVT completed for all pressures"
+
+#----------------- Step 3: NVE Simulation -------------------#
+for press in "${pressures[@]}"; do
+    (
+        run_dir="${home}/pressure_${press}"
+        mkdir -p "${run_dir}/step3_nve"
+        cp -r ${template_dir}/step3_nve/* "${run_dir}/step3_nve/"
+
+        cd "${run_dir}/step3_nve"
+        echo "Starting srun for step3_nve for pressure ${press}"
+        xH=$(grep "xlo xhi :" ../step2_nvt/log.lammps | tail -1 | awk '{print $5}')
+        yH=$(grep "ylo yhi :" ../step2_nvt/log.lammps | tail -1 | awk '{print $5}')
+        zH=$(grep "zlo zhi :" ../step2_nvt/log.lammps | tail -1 | awk '{print $5}')
+        srun --nodes=${numNodesPerJob} --ntasks=$((numNodesPerJob * 128)) --distribution=block:block --hint=nomultithread \
+            ${LMP_MPI} -in in.run -v "halfLz" ${zH} -v "xH" ${xH} -v "yH" ${yH} > log.sim 2>&1
+        echo "nve finished for pressure ${press}"
+    ) &
+done
+wait
+echo "Step 3: NVE completed for all pressures"
+
+#----------------- Step 4: Thermalization -------------------#
+for press in "${pressures[@]}"; do
+    (
+        run_dir="${home}/pressure_${press}"
+        mkdir -p "${run_dir}/step4_therm"
+        cp -r ${template_dir}/step4_therm/* "${run_dir}/step4_therm/"
+
+        cd "${run_dir}/step4_therm"
+        echo "Starting srun for step4_therm for pressure ${press}"
+        srun --nodes=${numNodesPerJob} --ntasks=$((numNodesPerJob * 128)) --distribution=block:block --hint=nomultithread \
+            ${LMP_MPI} -in in.run -v "RND1" ${seed1} -v "RND2" ${seed2} -v "RND3" ${seed3} -v "RND4" ${seed4} > log.sim 2>&1
+        echo "therm finished for pressure ${press}"
+
+        if [ ! -f "restart.step4" ]; then
+            echo "ERROR: Thermalization failed to create restart.step4 for pressure ${press}. Check step4_therm/log.sim"
+            exit 1
+        fi
+    ) &
+done
+wait
+echo "Step 4: Thermalization completed for all pressures"
+
+#----------------- Production Iterations -------------------#
+for ITER in $(seq 1 4); do
+    for press in "${pressures[@]}"; do
+        (
+            run_dir="${home}/pressure_${press}"
+            iter_dir="${run_dir}/step5_dump/iter${ITER}"
+            mkdir -p "${iter_dir}"
+            mkdir -p /scratch-nvme/<project>/<project>/<user>/graf_pfh/${press}bar/rep_1/
+
+            cp -r ${template_dir}/step5_dump/in.SiC.tersoff "${iter_dir}"
+            cp -r ${template_dir}/step5_dump/in.forcefield "${iter_dir}"
+            cp -r ${template_dir}/step5_dump/in.groups "${iter_dir}"
+            cp -r ${template_dir}/step5_dump/in.varDefs "${iter_dir}"
+            cp -r ${template_dir}/step5_dump/in.varDefs_shortRun "${iter_dir}"
+
+            # Determine restart_in based on iteration
+            if [ "$ITER" -eq 1 ]; then
+                restart_in="${run_dir}/step4_therm/restart.step4"
+                dump_begin=1
+                dump_end=${maxDump}
+                cp -r ${template_dir}/step5_dump/in.run.iter1 "${iter_dir}/in.run"
+                cp ${run_dir}/step4_therm/out.qInOut "${iter_dir}/"
+                cp ${run_dir}/step4_therm/out.enstats "${iter_dir}/"
+            else
+                prev_iter=$((ITER - 1))
+                restart_in="${run_dir}/step5_dump/iter${prev_iter}/restart.iter${prev_iter}"
+                dump_begin=$((prev_iter*maxDump+1))
+                dump_end=$((ITER*maxDump))
+                cp -r ${template_dir}/step5_dump/in.run.iter1++ "${iter_dir}/in.run"
+                cp ${run_dir}/step5_dump/iter${prev_iter}/out.qInOut "${iter_dir}/"
+                cp ${run_dir}/step5_dump/iter${prev_iter}/out.enstats "${iter_dir}/"
+            fi
+
+            restart_out="restart.iter${ITER}"
+
+            cd "${iter_dir}"
+            echo "dump files will be numbered from ${dump_begin} to ${dump_end} for pressure ${press}"
+
+            # Check if restart_in exists
+            if [ ! -f "$restart_in" ]; then
+                echo "ERROR: Restart file $restart_in not found for pressure ${press}, iteration ${ITER}."
+                exit 1
+            fi
+
+            echo "Starting srun for iteration ${ITER} for pressure ${press}"
+            srun --nodes=${numNodesPerJob} --ntasks=$((numNodesPerJob * 128)) --distribution=block:block --hint=nomultithread \
+                ${LMP_MPI} -in in.run -v restart_in "${restart_in}" -v restart_out "${restart_out}" -v press ${press} \
+                -v dump_begin ${dump_begin} -v dump_end ${dump_end} > log.iter${ITER}.sim 2>&1
+
+            # Check if restart_out was created
+            if [ ! -f "$restart_out" ]; then
+                echo "ERROR: Failed to create $restart_out for pressure ${press}, iteration ${ITER}."
+                exit 1
+            fi
+
+            echo "Production iteration ${ITER} completed for pressure ${press}"
+        ) &
+    done
+    wait
+    echo "Production iteration ${ITER} completed for all pressures"
+done
+
+echo "Workflow completed for all pressures."

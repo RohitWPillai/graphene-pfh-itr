@@ -1,0 +1,18 @@
+#!/bin/bash 
+
+CC -I/path/to/fftw/include computeDens.24Jun25.cpp -o exec.dens -O3
+
+zHot=-28.76   # hot
+zCold=-94.22   # cold
+nbins=1000
+blocksize=500 
+domainSide="R"
+
+src="/scratch-nvme/<project>/<project>/<user>/PFH/100bar/rep_1/dump1.rpfh"
+
+# ./exec.dens /scratch-nvme/<project>/<project>/<user>/pfh/dump.vdos.lammpstrj out.dens ${zlo} ${zhi} ${nbins} ${blocksize} > log.sim
+./exec.dens ${src} out.dens ${zHot} ${zCold} ${nbins} ${blocksize} ${domainSide} > log.sim   &
+# ./exec.dens /scratch-nvme/<project>/<project>/<user>/PFH/100bar/dump2.rpfh out2.dens ${zlo} ${zhi} ${nbins} ${blocksize} > log.sim   &
+# ./exec.dens /scratch-nvme/<project>/<project>/<user>/PFH/100bar/dump3.rpfh out3.dens ${zlo} ${zhi} ${nbins} ${blocksize} > log.sim   &
+# ./exec.dens /scratch-nvme/<project>/<project>/<user>/PFH/100bar/dump4.rpfh out4.dens ${zlo} ${zhi} ${nbins} ${blocksize} > log.sim   &
+# ./exec.dens /scratch-nvme/<project>/<project>/<user>/PFH/100bar/dump5.rpfh out5.dens ${zlo} ${zhi} ${nbins} ${blocksize} > log.sim

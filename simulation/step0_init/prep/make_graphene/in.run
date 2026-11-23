@@ -1,0 +1,126 @@
+#############################################################################################
+# LAMMPS input script to equilibrate a graphite-water system                                #
+# Author : Thejas Hulikal Chakrapani                                                        #
+# Institute for Multiscale Thermofluids                                                     #
+# University of Edinburgh                                                                   # 
+# Date : 20th February, 2025                                                                #    
+#                                                                                           #
+# References :                                                                              #
+# [1] Units Conversion  :   https://physics.nist.gov/cuu/Constants/energy.html              #
+#                           https://physics.nist.gov/cuu/Constants/factorlist.html          #
+# [2] C-C interaction   :  Lindsay, L., and D. A. Broido.                                   #
+#                          “Optimized Tersoff and Brenner Empirical Potential Parameters    #
+#                          for Lattice Dynamics and Phonon Thermal Transport in Carbon      #
+#                          Nanotubes and Graphene.”                                         #
+#                          Physical Review B 81, no. 20 (May 27, 2010): 205441.             #
+#                          https://doi.org/10.1103/PhysRevB.81.205441.                      #
+#############################################################################################
+
+#------------------
+# General commands 
+#------------------
+
+log             log.graphene_generate
+dimension       3            
+units           metal        
+boundary        p p p
+atom_style      full
+newton          on
+
+#--------------------------------------------------------------
+# Variables for converting real to metal units
+#--------------------------------------------------------------
+# Please refer to NIST [1] website for (basic) units conversion
+# -------------------------------------------------------------
+
+variable    mCarb           equal 12.0170 # g / mol
+
+variable bond equal 1.42
+variable latC equal 2.46                # Lattice constant in the basal plane graphite
+
+variable third     equal   1./3.
+variable twoThird  equal   2./3.
+variable half      equal   1./2.
+variable sixth     equal   1./6.
+
+variable zL equal -9/2.
+variable zH equal  9/2.
+
+variable a equal sqrt(3.0)/2.0          # Primitive lattice vectors in graphite
+variable b equal 1./2.
+variable c equal -sqrt(3.0)/2.0
+variable d equal sqrt(3.0)*${latC}
+
+lattice custom  1                                               &
+                a1      ${latC}      0               0          &
+                a2      0            ${d}            0          &
+                a3      0            0               3.35    &
+                basis   0            0               0          &
+                basis   ${half}     ${sixth}         0          &
+                basis   ${half}     ${half}          0          &
+                basis   0           ${twoThird}      0
+
+region simbox block -10 10 -5 5 ${zL} ${zH} units lattice
+create_box 9 simbox  # Allocate types for all sheets
+
+region sheet1 block -10 10 -5 5 3.90000000000000000000 4.10000000000000000000 units lattice
+create_atoms 1 region sheet1
+group graf1 region sheet1
+displace_atoms graf1 move 0 0 -8 units lattice
+
+region sheet2 block -10 10 -5 5 3.90000000000000000000 4.10000000000000000000 units lattice
+create_atoms 2 region sheet2
+group graf2 region sheet2
+displace_atoms graf2 move 0 ${third} -7 units lattice
+
+region sheet3 block -10 10 -5 5 3.90000000000000000000 4.10000000000000000000 units lattice
+create_atoms 3 region sheet3
+group graf3 region sheet3
+displace_atoms graf3 move 0 0 -6 units lattice
+
+region sheet4 block -10 10 -5 5 3.90000000000000000000 4.10000000000000000000 units lattice
+create_atoms 4 region sheet4
+group graf4 region sheet4
+displace_atoms graf4 move 0 ${third} -5 units lattice
+
+region sheet5 block -10 10 -5 5 3.90000000000000000000 4.10000000000000000000 units lattice
+create_atoms 5 region sheet5
+group graf5 region sheet5
+displace_atoms graf5 move 0 0 -4 units lattice
+
+region sheet6 block -10 10 -5 5 3.90000000000000000000 4.10000000000000000000 units lattice
+create_atoms 6 region sheet6
+group graf6 region sheet6
+displace_atoms graf6 move 0 ${third} -3 units lattice
+
+region sheet7 block -10 10 -5 5 3.90000000000000000000 4.10000000000000000000 units lattice
+create_atoms 7 region sheet7
+group graf7 region sheet7
+displace_atoms graf7 move 0 0 -2 units lattice
+
+region sheet8 block -10 10 -5 5 3.90000000000000000000 4.10000000000000000000 units lattice
+create_atoms 8 region sheet8
+group graf8 region sheet8
+displace_atoms graf8 move 0 ${third} -1 units lattice
+
+region sheet9 block -10 10 -5 5 3.90000000000000000000 4.10000000000000000000 units lattice
+create_atoms 9 region sheet9
+group graf9 region sheet9
+displace_atoms graf9 move 0 0 0 units lattice
+
+
+      
+
+# Set Masses 
+mass *     12.0170
+
+# Set Charges 
+set type *     charge   0.0000 # C
+
+# Set Velocities 
+velocity all  create 300.0 12423 dist gaussian  mom yes
+
+run 1
+
+write_data out.graphene types numeric pair ij
+

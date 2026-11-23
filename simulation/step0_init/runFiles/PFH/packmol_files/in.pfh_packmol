@@ -1,0 +1,17 @@
+# A box packed with pfh molecules
+tolerance 1.5
+
+# The file type of input and output files is XYZ
+
+filetype xyz
+
+# The name of the output file
+
+output out.pfh_packmol
+
+seed 9918411 
+
+structure c6f14.xyz 
+number 1000
+inside box -25. -25. -25. 25. 50. 50.
+end structure

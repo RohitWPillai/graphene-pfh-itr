@@ -1,0 +1,33 @@
+# The group of atoms that are thermalized 
+# 1) heat injected  to   group heatReg - using fix nvt
+# 2) heat extracted from group coolReg - using fix nvt
+# 3) nve on atoms in     group notherm  - just fix nve
+
+# -- CHECK_SUM = 9 groups in total before this, see in.groups in step2_nve
+
+# Defining groups 
+region lefthalf  block  EDGE EDGE EDGE EDGE ${zL}         0
+region righthalf block  EDGE EDGE EDGE EDGE 0             ${zH}
+region midBox    block  EDGE EDGE EDGE EDGE ${leftcntr}   ${rightcntr}
+region endBoxL   block  EDGE EDGE EDGE EDGE ${zL}         ${leftcntr}
+region endBoxR   block  EDGE EDGE EDGE EDGE ${rightcntr}  ${zH}        
+region endBox    union 2 endBoxL endBoxR
+
+group   therm  type  4 5 6 15 14 13
+# -- CHECK_SUM = 10 groups in total 
+
+group midAtoms   region midBox              # atoms in the middle -- center of left half to center of right half
+group endAtoms   region endBox              # atoms in the end -- [left edge to left center] and [right center to right edge]
+
+# definition of heating and cooling regions
+group heatReg    intersect midAtoms therm               # heating region in the center of the box
+group coolRegL   intersect endAtoms therm  leftAtoms    # left cooling region 
+group coolRegR   intersect endAtoms therm  rightAtoms   # right cooling region 
+group coolReg    union coolRegL coolRegR 
+group noheat     subtract  all therm        # all atoms not in the thermalization region
+
+group midAtoms delete 
+group endAtoms delete 
+group therm    delete 
+
+# -- CHECK_SUM = 14 groups in total 

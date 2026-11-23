@@ -1,0 +1,159 @@
+#-------------------------------------------------------------------------------------------#
+#                                    Force Fields                                           #
+#-------------------------------------------------------------------------------------------#
+# (1) Graphene force field  : Optimized-Tersoff for Intra C-C                               #
+# (2) LJ                    : LJ/Cut for Inter C-C                                          #
+# (3) PFH                   : OPLS-AA for PFH                                               #
+#                                                                                           #
+# References :                                                                              #
+#                                                                                           #
+# [2] OPLS-AA model     :   Watkins, E. K. and Jorgensen, W. L.,                            # 
+#                           Perfluoroalkanes : Conformational Analysis and Liquid-State     # 
+#                           Properties from ab Initio and Monte Carlo Calculations          # 
+#                           J. Phys. Chem. A, 2001, 105, 4118-4125                          #
+#                                                                                           #
+# [3] C-C intra         :  Lindsay, L., and D. A. Broido.                                   #
+#                          “Optimized Tersoff and Brenner Empirical Potential Parameters    #
+#                          for Lattice Dynamics and Phonon Thermal Transport in Carbon      #
+#                          Nanotubes and Graphene.”                                         #
+#                          Physical Review B 81, no. 20 (May 27, 2010): 205441.             #
+#                          https://doi.org/10.1103/PhysRevB.81.205441.                      #
+#                          Refer specifically to Table III, values of B=430 and h=-0.930    #
+#                                                                                           #
+# [4] C-C inter         : Girifalco, L. A., Miroslav, H., Lee, R. S.                        #
+#                         "Carbon Nanotubes, Buckyballs, Ropes, and a Universal Graphitic   # 
+#                         Potential. Phys. Rev. B 2000, 62 (19), 13104–13110.               #
+#                         https://doi.org/10.1103/PhysRevB.62.13104.                        #
+#-------------------------------------------------------------------------------------------#
+
+# Pair-styles 
+pair_style hybrid                       & 
+           lj/cut/coul/long 15.0 13.0   & 
+           lj/smooth/linear 15          &
+           tersoff                      &    
+
+dihedral_style  opls
+bond_style      harmonic      
+angle_style     harmonic
+
+special_bonds lj/coul 0.0 0.0 0.5
+
+# pair_modify mix geometric
+kspace_style pppm 1e-6
+
+#---------------------------------------------------------------------------------------#
+#           Non-bonded interactions for PFH, graphene, and PFH-graphene                 #
+#---------------------------------------------------------------------------------------#
+# Pair Coeffs for all carbon interactions in the graphene sheets
+#
+# 3-14 C
+variable  eps_CTCT equal 0.066*${kcalmol_to_ev}        # Ref.[1], Terminal carbon-Terminal carbon interaction PFH molecules
+variable  eps_C2C2 equal 0.066*${kcalmol_to_ev}        # Ref.[1], Terminal carbon-main carbon interaction between PFH molecules
+variable  eps_FF   equal 0.053*${kcalmol_to_ev}        # Ref.[1], Fluorine-Fluorine interaction between PFH molecules
+variable  eps_CC   equal 0.00239                       # Ref.[5]
+
+variable  sig_CTCT  equal 3.500                       # Ref.[1]
+variable  sig_C2C2  equal 3.500                       # Ref.[1]
+variable  sig_FF    equal 2.950                       # Ref.[1]
+variable  sig_CC    equal 3.412                       # Ref.[5]
+
+# geometric mixing rules
+variable  eps_CTC2 equal sqrt(${eps_CTCT})*sqrt(${eps_C2C2})  
+variable  eps_CTC2 equal sqrt(${eps_CTCT})*sqrt(${eps_C2C2})
+variable  eps_CTF  equal sqrt(${eps_CTCT})*sqrt(${eps_FF})
+variable  eps_CTC  equal sqrt(${eps_CTCT})*sqrt(${eps_CC})
+variable  eps_C2F  equal sqrt(${eps_C2C2})*sqrt(${eps_FF})
+variable  eps_C2C  equal sqrt(${eps_C2C2})*sqrt(${eps_CC})
+variable  eps_FC   equal sqrt(${eps_FF})*sqrt(${eps_CC})
+
+variable  sig_CTC2 equal sqrt(${sig_CTCT})*sqrt(${sig_C2C2})
+variable  sig_CTF  equal sqrt(${sig_CTCT})*sqrt(${sig_FF})
+variable  sig_C2F  equal sqrt(${sig_C2C2})*sqrt(${sig_FF})
+variable  sig_CTC  equal 0.5*(${sig_CTCT}+${sig_CC})
+variable  sig_C2C  equal 0.5*(${sig_C2C2}+${sig_CC})
+variable  sig_FC   equal 0.5*(${sig_FF}+${sig_CC})
+
+pair_coeff  * * tersoff in.SiC.tersoff NULL NULL NULL C C C C C C C C C C C C C C C C C C
+pair_coeff  4 5*     lj/smooth/linear  ${eps_CC}   ${sig_CC}
+pair_coeff  5 6*     lj/smooth/linear  ${eps_CC}   ${sig_CC}
+pair_coeff  6 7*     lj/smooth/linear  ${eps_CC}   ${sig_CC}
+pair_coeff  7 8*     lj/smooth/linear  ${eps_CC}   ${sig_CC}
+pair_coeff  8 9*     lj/smooth/linear  ${eps_CC}   ${sig_CC}
+pair_coeff  9 10*    lj/smooth/linear  ${eps_CC}   ${sig_CC}
+pair_coeff  10 11*   lj/smooth/linear  ${eps_CC}   ${sig_CC}
+pair_coeff  11 12*   lj/smooth/linear  ${eps_CC}   ${sig_CC}
+pair_coeff  12 13*   lj/smooth/linear  ${eps_CC}   ${sig_CC}
+pair_coeff  13 14*   lj/smooth/linear  ${eps_CC}   ${sig_CC}
+pair_coeff  14 15*   lj/smooth/linear  ${eps_CC}   ${sig_CC}
+pair_coeff  15 16*   lj/smooth/linear  ${eps_CC}   ${sig_CC}
+pair_coeff  16 17*   lj/smooth/linear  ${eps_CC}   ${sig_CC}
+pair_coeff  17 18*   lj/smooth/linear  ${eps_CC}   ${sig_CC}
+pair_coeff  18 19*   lj/smooth/linear  ${eps_CC}   ${sig_CC}
+pair_coeff  19 20*   lj/smooth/linear  ${eps_CC}   ${sig_CC}
+pair_coeff  20 21    lj/smooth/linear  ${eps_CC}   ${sig_CC}
+
+# Pair coeffs for like-like interactions between atoms composing the PFH molecules
+pair_coeff  1 1 lj/cut/coul/long ${eps_CTCT} ${sig_CTCT}
+pair_coeff  2 2 lj/cut/coul/long ${eps_C2C2} ${sig_C2C2}
+pair_coeff  3 3 lj/cut/coul/long ${eps_FF}   ${sig_FF}  
+
+# Pair coeffs for unlike interactions between atoms composing the PFH molecules
+pair_coeff  1 2 lj/cut/coul/long ${eps_CTC2} ${sig_CTC2}
+pair_coeff  1 3 lj/cut/coul/long ${eps_CTF}  ${sig_CTF} 
+pair_coeff  2 3 lj/cut/coul/long ${eps_C2F}  ${sig_C2F} 
+
+# Pair coeffs for unlike interactions between atoms composing the PFH molecules and carbon atoms in graphene 
+pair_coeff  1  4*21 lj/smooth/linear ${eps_CTC}  ${sig_CTC}
+pair_coeff  2  4*21 lj/smooth/linear ${eps_C2C}  ${sig_C2C} 
+pair_coeff  3  4*21 lj/smooth/linear ${eps_FC}   ${sig_FC}  
+
+#-----------------------------------------------#
+#           Dihedral coeffs. for PFH            #
+#-----------------------------------------------#
+
+# Fourier coefficients for dihedral coeffs.
+variable  V1_t1     equal  6.622*${kcalmol_to_ev}      # Ref. [1]
+variable  V2_t1     equal  0.948*${kcalmol_to_ev}      # Ref. [1]
+variable  V3_t1     equal -1.388*${kcalmol_to_ev}      # Ref. [1]
+variable  V4_t1     equal -2.118*${kcalmol_to_ev}      # Ref. [1]
+
+variable  V1_t2     equal  0.300*${kcalmol_to_ev}      # Ref. [1]
+variable  V2_t2     equal  0.000*${kcalmol_to_ev}      # Ref. [1]
+variable  V3_t2     equal  0.400*${kcalmol_to_ev}      # Ref. [1]
+variable  V4_t2     equal  0.000*${kcalmol_to_ev}      # Ref. [1]
+
+variable  V1_t3     equal -2.500*${kcalmol_to_ev}      # Ref. [1]
+variable  V2_t3     equal  0.000*${kcalmol_to_ev}      # Ref. [1]
+variable  V3_t3     equal  0.250*${kcalmol_to_ev}      # Ref. [1]
+variable  V4_t3     equal  0.000*${kcalmol_to_ev}      # Ref. [1]
+
+dihedral_coeff 1  ${V1_t1} ${V2_t1} ${V3_t1} ${V4_t1}  
+dihedral_coeff 2  ${V1_t2} ${V2_t2} ${V3_t2} ${V4_t2}
+dihedral_coeff 3  ${V1_t3} ${V2_t3} ${V3_t3} ${V4_t3}
+
+#-----------------------------------------------#
+#           Bond stretch coeffs. for PFH        #
+#-----------------------------------------------#
+# Bond stretch coeffs for bonds inside PFH
+variable  b_t1     equal  268*${kcalmol_to_ev}      # Ref. [1]
+variable  b_t2     equal  367*${kcalmol_to_ev}      # Ref. [1]
+
+variable  a_t1     equal  58.35*${kcalmol_to_ev}    # Ref. [1]
+variable  a_t2     equal  50.00*${kcalmol_to_ev}    # Ref. [1]
+variable  a_t3     equal  77.00*${kcalmol_to_ev}    # Ref. [1]
+
+bond_coeff 1 ${b_t1} 1.529
+bond_coeff 2 ${b_t2} 1.332
+
+angle_coeff 1 ${a_t1} 112.7
+angle_coeff 2 ${a_t2} 109.5
+angle_coeff 3 ${a_t3} 109.1
+
+#-----------------------------------------------#
+#           Masses and charges for all atoms    #
+#-----------------------------------------------#
+# masses 
+mass 1   12.011     # C1
+mass 2   12.011     # C2
+mass 3   18.998     # F 
+mass 4*  12.011     # C-Tersoff in graphene 

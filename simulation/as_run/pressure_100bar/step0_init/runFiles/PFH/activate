@@ -1,0 +1,4 @@
+#!/bin/bash 
+
+/opt/homebrew/bin/python3 -m venv ~/moltemplate_env
+source ~/moltemplate_env/bin/activate

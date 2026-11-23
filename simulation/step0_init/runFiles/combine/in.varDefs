@@ -1,0 +1,13 @@
+
+#--------------------------------------------------------------
+# Variables for converting real to metal units
+# -------------------------------------------------------------
+
+    variable  j_to_ev        equal  6.241509074e18                  # 1 J= ${j_to_ev} eV
+    variable  kB_si          equal  1.380649e-23                    # in units of J/K
+    variable  kB             equal  ${kB_si}*${j_to_ev}             # boltzmann constant in units of eV/K
+    variable  nAv            equal  6.02214076e23                   # Nav in units of mol^{-1}
+    variable  j_to_ev        equal  6.241509074e18                  # 1 J= ${j_to_ev} eV
+    variable  kcal_to_j      equal  4184                            # kcal to kJ
+    variable  kcalmol_to_ev  equal  ${kcal_to_j}*${j_to_ev}/${nAv}  # kcal/mol to ev 
+    variable  kJmol_to_ev    equal  1e3*${j_to_ev}/${nAv}           # kJmol to ev

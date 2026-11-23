@@ -1,0 +1,9 @@
+#!/bin/bash
+
+mpi="/path/to/lammps-29Aug2024/src/lmp_mpi"
+
+ncores=24
+in="in.graphene"
+seedrndm="1234521"
+
+mpirun -np ${ncores} ${mpi} -in ${in} -v "seedrndm" ${seedrndm}

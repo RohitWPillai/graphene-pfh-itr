@@ -1,0 +1,9 @@
+.DS_Store
+*.lammpstrj
+dump*
+restart*
+*.rstrt
+log.lammps
+slurm-*.out
+__pycache__/
+*.pyc

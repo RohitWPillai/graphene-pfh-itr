@@ -1,0 +1,15 @@
+#!/bin/bash
+
+mpi="/path/to/lammps-stable_29Aug2024/src/lmp_mpi"
+
+ncores=14
+in="in.run"
+
+srcDir="../step2_nvt"
+cp ${srcDir}/config.end_of_nvt ./
+
+xH=$(grep "xlo xhi :" ${srcDir}/log.lammps | tail -1 | awk '{print $5}')
+yH=$(grep "ylo yhi :" ${srcDir}/log.lammps | tail -1 | awk '{print $5}')
+zH=$(grep "zlo zhi :" ${srcDir}/log.lammps | tail -1 | awk '{print $5}')
+
+mpirun -np ${ncores} ${mpi} -in ${in} -v "halfLz" ${zH} -v "xH" ${xH} -v "yH" ${yH} -v "RND1" ${seed1} -v "RND2" ${seed2}

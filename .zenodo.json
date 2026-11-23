@@ -1,0 +1,35 @@
+{
+  "title": "Heat flow across graphene / n-perfluorohexane interfaces: NEMD inputs, analysis and data, 50 to 400 bar",
+  "upload_type": "dataset",
+  "description": "<p>Non-equilibrium molecular dynamics (LAMMPS) of steady heat flow across interfaces between multilayer graphene and liquid n-perfluorohexane (C6F14), a flexible six-carbon chain molecule. The seven pressures, 50, 100, 200, 250, 300, 350 and 400 bar, are the targets of the preparation stage; the pressure during the heat-flow runs is not recorded in the included files. The record contains the simulation inputs kept from the runs, the analysis code, the reduced data (temperature and density profiles, thermostat energies, spectral heat fluxes), the figures, and a script that recomputes the interfacial thermal (Kapitza) resistance, the density statistics and the checks on the spectral heat fluxes from the data. Changes to the inputs and the files left out are listed in README.md. Raw trajectories are not included. Rebuilding the starting configuration needs packmol, the molecule file c6f14.xyz and moltemplate's oplsaa2024.lt, which are not included. The results are preliminary and have not been peer reviewed.</p><p>Licences: the record's CC BY 4.0 licence covers the data, figures and text. The code is under the MIT licence, except the Tersoff potential files, which come from LAMMPS and stay under GPL-2.0. See LICENSE, LICENSE-data, THIRD-PARTY.md and LICENSES/.</p>",
+  "creators": [
+    {
+      "name": "Hulikal Chakrapani, Thejas",
+      "affiliation": "School of Engineering, University of Edinburgh",
+      "orcid": "0000-0002-8182-345X"
+    },
+    {
+      "name": "Pillai, Rohit",
+      "affiliation": "School of Engineering, University of Edinburgh",
+      "orcid": "0000-0002-1332-4819"
+    }
+  ],
+  "license": "cc-by-4.0",
+  "keywords": [
+    "non-equilibrium molecular dynamics",
+    "interfacial thermal resistance",
+    "Kapitza resistance",
+    "graphene",
+    "perfluorohexane",
+    "solid-liquid interface",
+    "LAMMPS"
+  ],
+  "related_identifiers": [
+    {
+      "identifier": "https://github.com/RohitWPillai/graphene-pfh-itr",
+      "relation": "isSupplementTo",
+      "resource_type": "software"
+    }
+  ],
+  "language": "eng"
+}

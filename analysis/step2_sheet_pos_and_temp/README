@@ -1,0 +1,10 @@
+# Scripts to obtain the position of the graphene sheets and their temperatures 
+
+
+Step 1: Run compute.sheet_temp.slurm (  input - dump files in the scratch folder, 
+                                        output - positions and temperatures of graphene sheets for each dump file )
+
+Step 2: Run find_wall_lims.py ( input  - positions of graphene sheets for each dump file from step 1, 
+                                output - mean position of the graphene sheets across all dump files )
+
+Using the mean position of the graphene sheets from Step 2, we can create bins and evaluate temperature of water between graphene sheets 

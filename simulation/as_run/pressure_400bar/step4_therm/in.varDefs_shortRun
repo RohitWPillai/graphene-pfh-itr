@@ -1,0 +1,55 @@
+
+#--------------------------------------------------------------
+# Variables for converting real to metal units
+# -------------------------------------------------------------
+
+    variable  damp           equal  0.5
+
+    variable  j_to_ev        equal  6.241509074e18                  # 1 J= ${j_to_ev} eV
+    variable  ev_to_j        equal  1./${j_to_ev}                   
+    variable  kB_si          equal  1.380649e-23                    # in units of J/K
+    variable  kB             equal  ${kB_si}*${j_to_ev}             # boltzmann constant in units of eV/K
+    variable  nAv            equal  6.02214076e23                   # Nav in units of mol^{-1}
+    variable  kcal_to_j      equal  4184                            # kcal to kJ
+    variable  kcalmol_to_ev  equal  ${kcal_to_j}*${j_to_ev}/${nAv}  # kcal/mol to ev 
+    variable  kJmol_to_ev    equal  1e3*${j_to_ev}/${nAv}           # kJmol to ev
+    variable  ang3_to_m3     equal  1e-30                           # ang^3 to m^3
+    variable  m3_to_ang3     equal  1e30                            # ang^3 to m^3
+    variable  to_J_m3        equal  ${ev_to_j}/${ang3_to_m3}        # ev/ang^3 to J/m^3
+    variable  to_bar         equal  ${to_J_m3}*1e-5                 # Press in bar     
+
+    variable  Npnvt          equal  1e3             # Prep NVT 
+    variable  Npnve          equal  1e3             # Prep NVE 
+    variable  tempHot        equal  350             # temperature
+    variable  tempCold       equal  250             # temperature
+    variable  tempEquil      equal  300             # temperature
+    variable  Nrst           equal  1e3             # write restart every ...
+    variable  Ndump          equal  1e5             # dump every ...
+    variable  Ndump2         equal  5e3             # dump every ...
+    variable  Nitherm        equal  1e3             # long NVE steps
+    variable  Nshort1        equal  5e2             # short run ...
+    variable  Nshort2        equal  5e3             # short run ...
+    variable  Nsample        equal  5e3             # sampling for stats
+    variable  Ntot           equal  100e6           # Total run time ...
+    variable  Nt             equal  1e2             # Output thermo every ...
+    variable  shakeStats     equal  1e2             # Display shake stats every ... 
+
+    variable  Nevery1        equal  1               # Nevery
+    variable  Nrepeat1       equal  5e1             # Nrepeat
+    variable  Nfreq1         equal  5e1             # Nfreq
+
+    variable  Nevery2        equal  1               # Nevery
+    variable  Nrepeat2       equal  1e1             # Nrepeat
+    variable  Nfreq2         equal  1e1             # Nfreq
+
+    variable  xL             equal  xlo
+    variable  xH             equal  xhi
+    variable  yL             equal  ylo
+    variable  yH             equal  yhi
+    variable  zL             equal  zlo
+    variable  zH             equal  zhi
+    variable  leftcntr       equal  zlo/2
+    variable  rightcntr      equal  zhi/2
+
+    variable  nbins_fine     equal  300
+    variable  nbins_coarse   equal  3  

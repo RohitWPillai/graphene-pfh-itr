@@ -1,0 +1,10 @@
+import "pfh.lt" # <- defines the "pfh" molecule type.
+
+pfhs = new PFH[xxx]
+
+# Periodic boundary conditions:
+write_once("Data Boundary") {
+   XLOW XHIGH xlo xhi
+   YLOW YHIGH ylo yhi
+   ZLOW ZHIGH zlo zhi
+}

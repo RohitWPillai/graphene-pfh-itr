@@ -1,0 +1,2 @@
+fix  boxLz  all  ave/time  ${Nevery1}  ${Nrep1} ${Nfreq1} v_lz file out.boxlz
+fix  avLz   all  ave/time  1           ${Npnpt} ${Npnpt}  v_lz file out.avboxlz

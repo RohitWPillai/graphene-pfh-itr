@@ -1,0 +1,40 @@
+# Simulation geometry 
+# ----------------- Left domain -------------------------#------------------ Right domain -----------------------#
+# 4 5 6 7 8 9 10 11 12 | 1 2 3 | 21 20 19 18 17 16 15 14 13 | 4 5 6 7 8 9 10 11 12 | 1 2 3 | 21 20 19 18 17 16 15 14 13
+# C C C - - -  -  -  -   - - -    -  -  -  -  -  -  H  H  H   H H H - - -  -  -  -   - - -    -  -  -  -  -  -  C  C  C 
+# ----------------- Left domain -------------------------#------------------ Right domain -----------------------#
+
+# -- CHECK_SUM = 14 groups in total before this, see in.groups in step3_therm
+#
+# GROUPS used in in.run
+# [1] PFH    
+# [2] heatReg
+# [3] coolReg
+# [4] noheat 
+# [5] lhotwall
+# [6] rhotwall
+# [7] pfhleft
+# [8] pfhright
+# GROUPS used here
+# [9] leftAtoms
+# [10] rightAtoms
+
+# delete groups 
+group coolRegL      delete 
+group coolRegR      delete 
+group wallright     delete 
+group wallleft      delete 
+
+# make groups for sdhf calculation [See sketch above]
+group graf_pfhRight type 21 20 19 18 17 16 15 14 13
+group graf_pfhLeft  type  4  5  6  7  8  9 10 11 12
+
+# -- CHECK_SUM = 12 groups in total 
+
+group lhotwall  intersect graf_pfhRight leftAtoms
+group rcoolwall intersect graf_pfhRight rightAtoms 
+
+group lcoolwall intersect graf_pfhLeft  leftAtoms  
+group rhotwall  intersect graf_pfhLeft  rightAtoms
+
+# -- CHECK_SUM = 16 groups in total 

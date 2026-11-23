@@ -1,0 +1,95 @@
+########################################################################
+# LAMMPS input script for dumping forces of combined graphene-PFH system
+########################################################################
+
+    dimension       3
+    units           metal
+    boundary        p p p
+    atom_style      full
+    echo            both
+
+    read_restart    ${restart_in}   # this should come from the parent_script
+
+    # include         in.varDefs_shortRun
+    include         in.varDefs
+    include         in.forcefield
+    include         in.groups
+
+    run_style       verlet
+    neighbor        3.0 bin
+    neigh_modify    every 10 delay 10 check yes one 10000
+
+    compute lHfrc lhotwall force/tally pfhleft
+    compute rHfrc rhotwall force/tally pfhright
+
+##############################################################
+# NVE : Simulate the system with no barostats or thermostats #
+##############################################################
+
+    fix  qIn      heatReg nvt temp ${tempHot}  ${tempHot}  ${damp}
+    fix  qOut     coolReg nvt temp ${tempCold} ${tempCold} ${damp}
+    fix  notherm  noheat  nve
+    fix  center   all     recenter INIT INIT INIT units box
+
+########## PERFORM CHECKS DURING RUN ##########
+#### [1] compute heat fluxes and total energy ####
+
+    variable  keTot equal ke
+    variable  peTot equal pe
+    variable  eTot  equal etotal
+    variable  ecoup equal ecouple
+    variable  econs equal econserve
+
+#### end of [1] ########
+########## END OF CHECKS DURING RUN ##########
+
+    thermo_style    custom step temp pe ke etotal ecouple econserve 
+    thermo          ${Nt}
+    thermo_modify   flush yes
+    thermo_modify   format line "%d %15.3f %15.5f %15.5f %15.5f %15.5f %15.5f"              
+
+    fix qInOut        all ave/time    ${Nt} 1   ${Nt} f_qIn f_qOut append out.qInOut format "%15.5f"
+    fix enStats       all ave/time    ${Nt} 1   ${Nt} v_peTot v_keTot v_eTot v_ecoup v_econs append out.enstats format "%15.5f"
+
+    restart ${Nrst} restart.thermsample.*
+
+    variable a loop ${dump_begin} ${dump_end}
+    label loop
+
+	    dump        1 lhotwall custom ${Ndump} ${dest}/dump${a}.H.lwall id type x y z vx vy vz c_lHfrc[1] c_lHfrc[2] c_lHfrc[3]
+	    dump_modify 1 sort id
+	    dump_modify 1 format line "%d %d %10.4f %10.4f %10.4f %10.4f %10.4f %10.4f %15.5e %15.5e %15.5e"
+
+	    dump        2 lcoolwall custom ${Ndump} ${dest}/dump${a}.C.lwall id type x y z vx vy vz 
+	    dump_modify 2 sort id
+	    dump_modify 2 format line "%d %d %10.4f %10.4f %10.4f %10.4f %10.4f %10.4f"
+
+	    dump        3 rhotwall custom ${Ndump} ${dest}/dump${a}.H.rwall id type x y z vx vy vz c_rHfrc[1] c_rHfrc[2] c_rHfrc[3]
+	    dump_modify 3 sort id
+	    dump_modify 3 format line "%d %d %10.4f %10.4f %10.4f %10.4f %10.4f %10.4f %15.5e %15.5e %15.5e"
+
+	    dump        4 rcoolwall custom ${Ndump} ${dest}/dump${a}.C.rwall id type x y z vx vy vz
+	    dump_modify 4 sort id
+	    dump_modify 4 format line "%d %d %10.4f %10.4f %10.4f %10.4f %10.4f %10.4f"
+
+	    dump        5 pfhleft custom ${Ndump} ${dest}/dump${a}.lpfh id mol type x y z ix iy iz vx vy vz c_lHfrc[1] c_lHfrc[2] c_lHfrc[3]
+	    dump_modify 5 sort id
+	    dump_modify 5 format line "%d %d %d %10.4f %10.4f %10.4f %d %d %d %10.4f %10.4f %10.4f %15.5e %15.5e %15.5e"
+
+	    dump        6 pfhright custom ${Ndump} ${dest}/dump${a}.rpfh id mol type x y z ix iy iz vx vy vz c_rHfrc[1] c_rHfrc[2] c_rHfrc[3]
+	    dump_modify 6 sort id
+	    dump_modify 6 format line "%d %d %d %10.4f %10.4f %10.4f %d %d %d %10.4f %10.4f %10.4f %15.5e %15.5e %15.5e"
+
+	    run ${Nrunblock}
+
+	    undump 1
+	    undump 2
+	    undump 3
+	    undump 4
+	    undump 5
+	    undump 6
+
+    next a
+    jump SELF loop
+
+    write_restart ${restart_out}
